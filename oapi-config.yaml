@@ -1,0 +1,12 @@
+# oapi-codegen config: generate Go client + models.
+# Spec is fetched from the running API at /openapi/json (Scalar):
+#   bun run codegen:go-sdk   (from repo root) or  sh scripts/fetch-openapi.sh  (from sdks/go)
+package: safeurl
+generate:
+  client: true
+  models: true
+output: client.gen.go
+output-options:
+  skip-fmt: false
+  # Avoid name clash: schema types like CreateScanResponse vs wrapper type CreateScanResponse
+  response-type-suffix: "Resp"
