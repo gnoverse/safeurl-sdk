@@ -43,4 +43,4 @@ sh scripts/fetch-openapi.sh
 
 ## License
 
-Apache-2.0 (matches SafeURL project)
+Apache-2.0
