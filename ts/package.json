@@ -1,8 +1,14 @@
 {
-  "name": "@safeurl/sdk",
-  "module": "index.ts",
+  "name": "@gnoverse/safeurl-ts",
+  "version": "0.1.0",
+  "description": "SafeURL TypeScript SDK",
+  "main": "index.ts",
   "type": "module",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnoverse/safeurl-sdk.git",
+    "directory": "ts"
+  },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.94.4",
     "@types/bun": "latest"

@@ -7,13 +7,13 @@ Go client for the [SafeURL API](https://api.safeurl.ai), for URL safety screenin
 ## Installation
 
 ```bash
-go get github.com/safeurl/safeurl-go
+go get github.com/gnoverse/safeurl-sdk/go
 ```
 
 **Using from the SafeURL monorepo:** In your Go project's `go.mod`:
 
 ```go
-replace github.com/safeurl/safeurl-go => /path/to/safeurl/sdks/go
+replace github.com/gnoverse/safeurl-sdk/go => /path/to/safeurl/sdks/go
 ```
 
 ## Quick start
@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/safeurl/safeurl-go"
+	"github.com/gnoverse/safeurl-sdk/go"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/safeurl/safeurl-go
+module github.com/gnoverse/safeurl-sdk/go
 
 go 1.22
 

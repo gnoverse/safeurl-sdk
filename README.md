@@ -15,24 +15,32 @@ safeurl-sdk/
 └── ts/    # TypeScript SDK source and generation scripts
 ```
 
+## Installation
+
+### Go
+
+```bash
+go get github.com/gnoverse/safeurl-sdk/go
+```
+
+### TypeScript
+
+```bash
+npm install @gnoverse/safeurl-ts
+```
+
 ## Development
 
 These SDKs are generated from the SafeURL OpenAPI specification.
 
-### Regenerating Go SDK
+### Regenerating All SDKs
+
+From the root of this repository:
 
 ```bash
-cd go
-sh scripts/fetch-openapi.sh
-```
-
-### Regenerating TypeScript SDK
-
-```bash
-cd ts
 sh scripts/fetch-openapi.sh
 ```
 
 ## License
 
-Apache-2.0
+Apache-2.0 (matches SafeURL project)
