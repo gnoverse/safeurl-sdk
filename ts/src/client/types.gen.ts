@@ -168,6 +168,33 @@ export type GetV1ScansByIdAnalyticsResponses = {
     200: unknown;
 };
 
+export type GetV1ScansByIdEventsData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v1/scans/{id}/events';
+};
+
+export type GetV1ScansByIdEventsErrors = {
+    /**
+     * Insufficient scope (requires scan:read)
+     */
+    403: unknown;
+    /**
+     * Scan job not found
+     */
+    404: unknown;
+};
+
+export type GetV1ScansByIdEventsResponses = {
+    /**
+     * SSE stream
+     */
+    200: unknown;
+};
+
 export type GetV1ScansByIdData = {
     body?: never;
     path: {
@@ -243,4 +270,54 @@ export type PostV1CreditsPurchaseResponses = {
      * Response for status 201
      */
     201: unknown;
+};
+
+export type GetV1SettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/settings/';
+};
+
+export type GetV1SettingsErrors = {
+    /**
+     * Response for status 404
+     */
+    404: unknown;
+    /**
+     * Response for status 500
+     */
+    500: unknown;
+};
+
+export type GetV1SettingsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: unknown;
+};
+
+export type PutV1SettingsData = {
+    body: unknown;
+    path?: never;
+    query?: never;
+    url: '/v1/settings/';
+};
+
+export type PutV1SettingsErrors = {
+    /**
+     * Response for status 404
+     */
+    404: unknown;
+    /**
+     * Response for status 500
+     */
+    500: unknown;
+};
+
+export type PutV1SettingsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: unknown;
 };

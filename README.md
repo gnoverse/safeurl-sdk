@@ -32,6 +32,7 @@ npm install @gnoverse/safeurl-ts
 ## Development
 
 These SDKs are generated from the SafeURL OpenAPI specification.
+The fetched spec is stored once at the repository root as `openapi.json`.
 
 ### Regenerating All SDKs
 

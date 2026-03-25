@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteV1ApiKeysByIdData, DeleteV1ApiKeysByIdErrors, DeleteV1ApiKeysByIdResponses, GetHealthData, GetV1ApiKeysData, GetV1ApiKeysErrors, GetV1ApiKeysResponses, GetV1CreditsData, GetV1CreditsErrors, GetV1CreditsResponses, GetV1ScansByIdAnalyticsData, GetV1ScansByIdAnalyticsErrors, GetV1ScansByIdAnalyticsResponses, GetV1ScansByIdData, GetV1ScansByIdErrors, GetV1ScansByIdResponses, GetV1ScansData, GetV1ScansErrors, GetV1ScansResponses, PostV1ApiKeysData, PostV1ApiKeysErrors, PostV1ApiKeysResponses, PostV1CreditsPurchaseData, PostV1CreditsPurchaseErrors, PostV1CreditsPurchaseResponses, PostV1ScansBatchData, PostV1ScansBatchResponses, PostV1ScansData, PostV1ScansResponses } from './types.gen';
+import type { DeleteV1ApiKeysByIdData, DeleteV1ApiKeysByIdErrors, DeleteV1ApiKeysByIdResponses, GetHealthData, GetV1ApiKeysData, GetV1ApiKeysErrors, GetV1ApiKeysResponses, GetV1CreditsData, GetV1CreditsErrors, GetV1CreditsResponses, GetV1ScansByIdAnalyticsData, GetV1ScansByIdAnalyticsErrors, GetV1ScansByIdAnalyticsResponses, GetV1ScansByIdData, GetV1ScansByIdErrors, GetV1ScansByIdEventsData, GetV1ScansByIdEventsErrors, GetV1ScansByIdEventsResponses, GetV1ScansByIdResponses, GetV1ScansData, GetV1ScansErrors, GetV1ScansResponses, GetV1SettingsData, GetV1SettingsErrors, GetV1SettingsResponses, PostV1ApiKeysData, PostV1ApiKeysErrors, PostV1ApiKeysResponses, PostV1CreditsPurchaseData, PostV1CreditsPurchaseErrors, PostV1CreditsPurchaseResponses, PostV1ScansBatchData, PostV1ScansBatchResponses, PostV1ScansData, PostV1ScansResponses, PutV1SettingsData, PutV1SettingsErrors, PutV1SettingsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -96,6 +96,13 @@ export const postV1ScansBatch = <ThrowOnError extends boolean = false>(options: 
 export const getV1ScansByIdAnalytics = <ThrowOnError extends boolean = false>(options: Options<GetV1ScansByIdAnalyticsData, ThrowOnError>) => (options.client ?? client).get<GetV1ScansByIdAnalyticsResponses, GetV1ScansByIdAnalyticsErrors, ThrowOnError>({ url: '/v1/scans/{id}/analytics', ...options });
 
 /**
+ * Stream scan state changes via SSE
+ *
+ * Opens a Server-Sent Events stream that emits a state event immediately on connect, then on every state transition until a terminal state (COMPLETED, FAILED, TIMED_OUT) is reached.
+ */
+export const getV1ScansByIdEvents = <ThrowOnError extends boolean = false>(options: Options<GetV1ScansByIdEventsData, ThrowOnError>) => (options.client ?? client).get<GetV1ScansByIdEventsResponses, GetV1ScansByIdEventsErrors, ThrowOnError>({ url: '/v1/scans/{id}/events', ...options });
+
+/**
  * Get scan result by job ID
  *
  * Retrieves the scan result for a specific job ID. Returns the full result if completed, or status if in progress.
@@ -116,6 +123,27 @@ export const getV1Credits = <ThrowOnError extends boolean = false>(options?: Opt
  */
 export const postV1CreditsPurchase = <ThrowOnError extends boolean = false>(options: Options<PostV1CreditsPurchaseData, ThrowOnError>) => (options.client ?? client).post<PostV1CreditsPurchaseResponses, PostV1CreditsPurchaseErrors, ThrowOnError>({
     url: '/v1/credits/purchase',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get user settings
+ *
+ * Retrieves user-defined settings including safe/unsafe domain patterns.
+ */
+export const getV1Settings = <ThrowOnError extends boolean = false>(options?: Options<GetV1SettingsData, ThrowOnError>) => (options?.client ?? client).get<GetV1SettingsResponses, GetV1SettingsErrors, ThrowOnError>({ url: '/v1/settings/', ...options });
+
+/**
+ * Update user settings
+ *
+ * Updates user-defined settings like domain glob patterns for short-circuiting.
+ */
+export const putV1Settings = <ThrowOnError extends boolean = false>(options: Options<PutV1SettingsData, ThrowOnError>) => (options.client ?? client).put<PutV1SettingsResponses, PutV1SettingsErrors, ThrowOnError>({
+    url: '/v1/settings/',
     ...options,
     headers: {
         'Content-Type': 'application/json',

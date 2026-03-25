@@ -1,6 +1,7 @@
 # oapi-codegen config: generate Go client + models.
-# Spec is fetched from the running API at /openapi/json (Scalar):
-#   bun run codegen:go-sdk   (from repo root) or  sh scripts/fetch-openapi.sh  (from sdks/go)
+# Spec lives at the repo root (openapi.json). To regenerate:
+#   sh scripts/fetch-openapi.sh          (fetches fresh spec + regenerates all SDKs)
+#   go generate ./...                    (regenerates Go client from existing spec)
 package: safeurl
 generate:
   client: true
