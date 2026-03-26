@@ -2,13 +2,17 @@
 set -eu
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# Default assumes the safeurl server repo lives at ~/dev/safeurl.
+# If your checkout is elsewhere, set SAFEURL_REPO_DIR before running:
+#   SAFEURL_REPO_DIR=/path/to/safeurl sh scripts/test-sdk-smoke.sh
 SAFEURL_REPO_DIR="${SAFEURL_REPO_DIR:-$HOME/dev/safeurl}"
 SAFEURL_ENV_FILE="${SAFEURL_ENV_FILE:-${SAFEURL_REPO_DIR}/.env}"
 BASE_URL="${SAFEURL_SDK_TEST_BASE_URL:-http://localhost:8081}"
 
 if [ ! -f "${SAFEURL_ENV_FILE}" ]; then
   echo "Missing SafeURL env file: ${SAFEURL_ENV_FILE}" >&2
-  echo "Set SAFEURL_REPO_DIR if your safeurl checkout lives elsewhere." >&2
+  echo "Set SAFEURL_REPO_DIR to point at your safeurl server checkout, e.g.:" >&2
+  echo "  SAFEURL_REPO_DIR=/path/to/safeurl sh scripts/test-sdk-smoke.sh" >&2
   exit 1
 fi
 
