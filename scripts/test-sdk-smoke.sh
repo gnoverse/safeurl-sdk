@@ -32,7 +32,7 @@ echo "Loaded SafeURL env from ${SAFEURL_ENV_FILE}"
 echo "Running Go SDK smoke test against ${SAFEURL_SDK_TEST_BASE_URL} ..."
 (
   cd "${REPO_DIR}/go"
-  GOCACHE="${GOCACHE:-/tmp/go-build}" go test ./...
+  GOCACHE="${GOCACHE:-/tmp/go-build}" go test -count=1 ./...
 )
 
 echo "Running TypeScript SDK smoke test against ${SAFEURL_SDK_TEST_BASE_URL} ..."
