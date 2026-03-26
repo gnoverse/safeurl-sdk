@@ -40,9 +40,29 @@ Publishing `@safeurl/sdk` to npm from CI requires a repository secret **`NPM_TOK
 These SDKs are generated from the SafeURL OpenAPI specification.
 The fetched spec is stored once at the repository root as `openapi.json`.
 
+### Prerequisites
+
+Install [just](https://github.com/casey/just) to use the repo's task runner:
+
+```bash
+brew install just   # macOS
+# or: cargo install just
+```
+
+### Common Tasks
+
+| Command | Description |
+|---|---|
+| `just gen` | Fetch the OpenAPI spec and regenerate both SDKs |
+| `just smoke` | Run Go and TypeScript smoke tests against a local API |
+
 ### Regenerating All SDKs
 
-From the root of this repository:
+```bash
+just gen
+```
+
+Or directly:
 
 ```bash
 sh scripts/fetch-openapi.sh
@@ -50,7 +70,11 @@ sh scripts/fetch-openapi.sh
 
 ### Running SDK Smoke Tests
 
-Run both SDK smoke tests against a local SafeURL API:
+```bash
+just smoke
+```
+
+Or directly:
 
 ```bash
 sh scripts/test-sdk-smoke.sh
