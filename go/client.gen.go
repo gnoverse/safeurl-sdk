@@ -647,7 +647,7 @@ func NewDeleteV1ApiKeysByIdRequest(server string, id openapi_types.UUID) (*http.
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
 	if err != nil {
 		return nil, err
 	}
@@ -888,7 +888,7 @@ func NewGetV1ScansByIdRequest(server string, id openapi_types.UUID) (*http.Reque
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
 	if err != nil {
 		return nil, err
 	}
@@ -922,7 +922,7 @@ func NewGetV1ScansByIdAnalyticsRequest(server string, id openapi_types.UUID) (*h
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
 	if err != nil {
 		return nil, err
 	}
@@ -956,7 +956,7 @@ func NewGetV1ScansByIdEventsRequest(server string, id openapi_types.UUID) (*http
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
 	if err != nil {
 		return nil, err
 	}
