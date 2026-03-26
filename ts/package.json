@@ -1,9 +1,13 @@
 {
-  "name": "@gnoverse/safeurl-ts",
+  "name": "@safeurl/sdk",
   "version": "0.1.0",
   "description": "SafeURL TypeScript SDK",
   "main": "index.ts",
   "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "test:smoke": "bun test tests/sdk-smoke.test.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gnoverse/safeurl-sdk.git",
@@ -18,5 +22,8 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.13.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
