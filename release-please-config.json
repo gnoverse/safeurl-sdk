@@ -7,7 +7,6 @@
     },
     "go": {
       "release-type": "go",
-      "package-name": "safeurl-go",
       "changelog-path": "CHANGELOG.md"
     }
   }
