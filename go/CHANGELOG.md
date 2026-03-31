@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/gnoverse/safeurl-sdk/compare/v1.1.0...v1.1.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* **go:** use 'jobs' field from batch API response ([a600ab5](https://github.com/gnoverse/safeurl-sdk/commit/a600ab57022fc0f50a0f2d2616a1e85c542a976e))
+
 ## [1.1.0](https://github.com/gnoverse/safeurl-sdk/compare/v1.0.0...v1.1.0) (2026-03-30)
 
 
