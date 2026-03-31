@@ -297,6 +297,15 @@ func (s *Scanner) SubmitBatch(ctx context.Context, urls []string) (map[string]*S
 	results := make(map[string]*ScanResponse)
 	for i := range batchResp.Jobs {
 		scan := &batchResp.Jobs[i]
+		// If scan is completed but missing Result (deduplicated), fetch full details
+		if scan.IsComplete() && scan.Result == nil && scan.ID != "" {
+			fullScan, err := s.GetScan(ctx, scan.ID)
+			if err == nil && fullScan != nil {
+				results[scan.URL] = fullScan
+				continue
+			}
+			// If fetch fails, use the partial result
+		}
 		results[scan.URL] = scan
 	}
 

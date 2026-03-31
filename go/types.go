@@ -9,10 +9,11 @@ type ScanState string
 
 // Scan states returned by the API.
 const (
-	ScanStatePending    ScanState = "pending"
-	ScanStateProcessing ScanState = "processing"
-	ScanStateCompleted  ScanState = "completed"
-	ScanStateFailed     ScanState = "failed"
+	ScanStateQueued    ScanState = "QUEUED"
+	ScanStateFetching  ScanState = "FETCHING"
+	ScanStateAnalyzing ScanState = "ANALYZING"
+	ScanStateCompleted ScanState = "COMPLETED"
+	ScanStateFailed    ScanState = "FAILED"
 )
 
 // IsTerminal returns true if the scan state is terminal (completed or failed).
@@ -51,20 +52,46 @@ type BatchScanRequest struct {
 	URLs []string `json:"urls"`
 }
 
+// ScanResult contains the analysis result from a completed scan.
+type ScanResult struct {
+	RiskScore   float64  `json:"riskScore"`
+	Categories  []string `json:"categories,omitempty"`
+	Reasoning   string   `json:"reasoning,omitempty"`
+	ContentType string   `json:"contentType,omitempty"`
+}
+
 // ScanResponse represents a scan result from the API.
 type ScanResponse struct {
-	ID        string     `json:"id"`
-	URL       string     `json:"url"`
-	State     ScanState  `json:"state"`
-	Verdict   Verdict    `json:"verdict,omitempty"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+	ID           string      `json:"id"`
+	URL          string      `json:"url"`
+	State        ScanState   `json:"state"`
+	Deduplicated bool        `json:"deduplicated,omitempty"`
+	Result       *ScanResult `json:"result,omitempty"`
+	CreatedAt    time.Time   `json:"createdAt"`
+	UpdatedAt    time.Time   `json:"updatedAt"`
+	ExpiresAt    *time.Time  `json:"expiresAt,omitempty"`
 }
 
 // IsComplete returns true if the scan has finished processing.
 func (s *ScanResponse) IsComplete() bool {
 	return s.State.IsTerminal()
+}
+
+// GetVerdict returns the safety verdict based on the risk score.
+// Risk score thresholds: 0-30 safe, 31-60 suspect, 61-100 malicious.
+func (s *ScanResponse) GetVerdict() Verdict {
+	if s.Result == nil {
+		return VerdictUnknown
+	}
+	riskScore := s.Result.RiskScore
+	switch {
+	case riskScore <= 30:
+		return VerdictSafe
+	case riskScore <= 60:
+		return VerdictSuspect
+	default:
+		return VerdictMalicious
+	}
 }
 
 // BatchScanResponse represents the response from a batch scan request.
