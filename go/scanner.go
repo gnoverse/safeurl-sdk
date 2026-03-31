@@ -172,10 +172,90 @@ func (s *Scanner) ScanURLs(ctx context.Context, urls []string) (map[string]*Scan
 	return results, nil
 }
 
+// SubmitURLs submits multiple URLs for scanning without waiting for completion.
+// Returns immediately with the initial scan states (which may be pending).
+// Duplicate URLs are automatically deduplicated before scanning.
+// URLs are automatically chunked if they exceed the batch limit (50).
+// Returns a map of URL to scan result.
+func (s *Scanner) SubmitURLs(ctx context.Context, urls []string) (map[string]*ScanResponse, error) {
+	if len(urls) == 0 {
+		return make(map[string]*ScanResponse), nil
+	}
+
+	// Deduplicate URLs upfront to avoid splitting duplicates across chunks
+	seen := make(map[string]bool)
+	uniqueURLs := make([]string, 0, len(urls))
+	for _, u := range urls {
+		if !seen[u] {
+			seen[u] = true
+			uniqueURLs = append(uniqueURLs, u)
+		}
+	}
+
+	results := make(map[string]*ScanResponse)
+
+	// Process in chunks
+	for i := 0; i < len(uniqueURLs); i += BatchScanMaxURLs {
+		end := i + BatchScanMaxURLs
+		if end > len(uniqueURLs) {
+			end = len(uniqueURLs)
+		}
+		chunk := uniqueURLs[i:end]
+
+		chunkResults, err := s.SubmitBatch(ctx, chunk)
+		if err != nil {
+			return results, err
+		}
+
+		for url, result := range chunkResults {
+			results[url] = result
+		}
+	}
+
+	return results, nil
+}
+
 // ScanBatch scans a single batch of URLs (max 50) and waits for completion.
 // Duplicate URLs are automatically deduplicated before sending to the API.
 // Returns ErrBatchTooLarge if the number of unique URLs exceeds BatchScanMaxURLs.
 func (s *Scanner) ScanBatch(ctx context.Context, urls []string) (map[string]*ScanResponse, error) {
+	// Submit the batch
+	results, err := s.SubmitBatch(ctx, urls)
+	if err != nil {
+		return nil, err
+	}
+
+	// Collect pending scans
+	pending := make(map[string]string) // scanID -> url
+	for url, scan := range results {
+		if !scan.IsComplete() {
+			pending[scan.ID] = url
+		}
+	}
+
+	// Poll for pending scans
+	var firstErr error
+	for scanID, url := range pending {
+		scan, err := s.waitForScan(ctx, scanID)
+		if err != nil {
+			if firstErr == nil {
+				firstErr = err
+			}
+			// Continue processing other URLs, but track the error
+			continue
+		}
+		results[url] = scan
+	}
+
+	return results, firstErr
+}
+
+// SubmitBatch submits a batch of URLs for scanning without waiting for completion.
+// Returns immediately with the initial scan states (which may be pending).
+// Use GetScan to poll for completion, or use ScanBatch to wait automatically.
+// Duplicate URLs are automatically deduplicated before sending to the API.
+// Returns ErrBatchTooLarge if the number of unique URLs exceeds BatchScanMaxURLs.
+func (s *Scanner) SubmitBatch(ctx context.Context, urls []string) (map[string]*ScanResponse, error) {
 	// Deduplicate URLs
 	seen := make(map[string]bool)
 	uniqueURLs := make([]string, 0, len(urls))
@@ -215,32 +295,12 @@ func (s *Scanner) ScanBatch(ctx context.Context, urls []string) (map[string]*Sca
 	}
 
 	results := make(map[string]*ScanResponse)
-	pending := make(map[string]string) // scanID -> url
-
 	for i := range batchResp.Jobs {
 		scan := &batchResp.Jobs[i]
-		if scan.IsComplete() {
-			results[scan.URL] = scan
-		} else {
-			pending[scan.ID] = scan.URL
-		}
+		results[scan.URL] = scan
 	}
 
-	// Poll for pending scans
-	var firstErr error
-	for scanID, url := range pending {
-		scan, err := s.waitForScan(ctx, scanID)
-		if err != nil {
-			if firstErr == nil {
-				firstErr = err
-			}
-			// Continue processing other URLs, but track the error
-			continue
-		}
-		results[url] = scan
-	}
-
-	return results, firstErr
+	return results, nil
 }
 
 func (s *Scanner) waitForScan(ctx context.Context, scanID string) (*ScanResponse, error) {
