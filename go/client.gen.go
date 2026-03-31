@@ -12,105 +12,247 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for PostV1ApiKeysJSONBodyScopes.
+const (
+	PostV1ApiKeysJSONBodyScopesCreditsRead  PostV1ApiKeysJSONBodyScopes = "credits:read"
+	PostV1ApiKeysJSONBodyScopesCreditsWrite PostV1ApiKeysJSONBodyScopes = "credits:write"
+	PostV1ApiKeysJSONBodyScopesScanRead     PostV1ApiKeysJSONBodyScopes = "scan:read"
+	PostV1ApiKeysJSONBodyScopesScanWrite    PostV1ApiKeysJSONBodyScopes = "scan:write"
+)
+
+// Valid indicates whether the value is a known member of the PostV1ApiKeysJSONBodyScopes enum.
+func (e PostV1ApiKeysJSONBodyScopes) Valid() bool {
+	switch e {
+	case PostV1ApiKeysJSONBodyScopesCreditsRead:
+		return true
+	case PostV1ApiKeysJSONBodyScopesCreditsWrite:
+		return true
+	case PostV1ApiKeysJSONBodyScopesScanRead:
+		return true
+	case PostV1ApiKeysJSONBodyScopesScanWrite:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PostV1ApiKeysFormdataBodyScopes.
+const (
+	PostV1ApiKeysFormdataBodyScopesCreditsRead  PostV1ApiKeysFormdataBodyScopes = "credits:read"
+	PostV1ApiKeysFormdataBodyScopesCreditsWrite PostV1ApiKeysFormdataBodyScopes = "credits:write"
+	PostV1ApiKeysFormdataBodyScopesScanRead     PostV1ApiKeysFormdataBodyScopes = "scan:read"
+	PostV1ApiKeysFormdataBodyScopesScanWrite    PostV1ApiKeysFormdataBodyScopes = "scan:write"
+)
+
+// Valid indicates whether the value is a known member of the PostV1ApiKeysFormdataBodyScopes enum.
+func (e PostV1ApiKeysFormdataBodyScopes) Valid() bool {
+	switch e {
+	case PostV1ApiKeysFormdataBodyScopesCreditsRead:
+		return true
+	case PostV1ApiKeysFormdataBodyScopesCreditsWrite:
+		return true
+	case PostV1ApiKeysFormdataBodyScopesScanRead:
+		return true
+	case PostV1ApiKeysFormdataBodyScopesScanWrite:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PostV1ApiKeysMultipartBodyScopes.
+const (
+	CreditsRead  PostV1ApiKeysMultipartBodyScopes = "credits:read"
+	CreditsWrite PostV1ApiKeysMultipartBodyScopes = "credits:write"
+	ScanRead     PostV1ApiKeysMultipartBodyScopes = "scan:read"
+	ScanWrite    PostV1ApiKeysMultipartBodyScopes = "scan:write"
+)
+
+// Valid indicates whether the value is a known member of the PostV1ApiKeysMultipartBodyScopes enum.
+func (e PostV1ApiKeysMultipartBodyScopes) Valid() bool {
+	switch e {
+	case CreditsRead:
+		return true
+	case CreditsWrite:
+		return true
+	case ScanRead:
+		return true
+	case ScanWrite:
+		return true
+	default:
+		return false
+	}
+}
+
 // PostV1ApiKeysJSONBody defines parameters for PostV1ApiKeys.
-type PostV1ApiKeysJSONBody = interface{}
+type PostV1ApiKeysJSONBody struct {
+	// ExpiresAt Optional expiration date (ISO 8601)
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+
+	// Name Human-readable name for the API key
+	Name string `json:"name"`
+
+	// Scopes API key scopes/permissions
+	Scopes []PostV1ApiKeysJSONBodyScopes `json:"scopes"`
+}
 
 // PostV1ApiKeysFormdataBody defines parameters for PostV1ApiKeys.
-type PostV1ApiKeysFormdataBody = struct {
+type PostV1ApiKeysFormdataBody struct {
+	// ExpiresAt Optional expiration date (ISO 8601)
+	ExpiresAt *time.Time `form:"expiresAt,omitempty" json:"expiresAt,omitempty"`
+
+	// Name Human-readable name for the API key
+	Name string `form:"name" json:"name"`
+
+	// Scopes API key scopes/permissions
+	Scopes []PostV1ApiKeysFormdataBodyScopes `form:"scopes" json:"scopes"`
 }
 
 // PostV1ApiKeysMultipartBody defines parameters for PostV1ApiKeys.
-type PostV1ApiKeysMultipartBody = interface{}
+type PostV1ApiKeysMultipartBody struct {
+	// ExpiresAt Optional expiration date (ISO 8601)
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+
+	// Name Human-readable name for the API key
+	Name string `json:"name"`
+
+	// Scopes API key scopes/permissions
+	Scopes []PostV1ApiKeysMultipartBodyScopes `json:"scopes"`
+}
+
+// PostV1ApiKeysJSONBodyScopes defines parameters for PostV1ApiKeys.
+type PostV1ApiKeysJSONBodyScopes string
+
+// PostV1ApiKeysFormdataBodyScopes defines parameters for PostV1ApiKeys.
+type PostV1ApiKeysFormdataBodyScopes string
+
+// PostV1ApiKeysMultipartBodyScopes defines parameters for PostV1ApiKeys.
+type PostV1ApiKeysMultipartBodyScopes string
 
 // PostV1CreditsPurchaseJSONBody defines parameters for PostV1CreditsPurchase.
-type PostV1CreditsPurchaseJSONBody = interface{}
+type PostV1CreditsPurchaseJSONBody struct {
+	Amount int `json:"amount"`
+}
 
 // PostV1CreditsPurchaseFormdataBody defines parameters for PostV1CreditsPurchase.
-type PostV1CreditsPurchaseFormdataBody = struct {
+type PostV1CreditsPurchaseFormdataBody struct {
+	Amount int `form:"amount" json:"amount"`
 }
 
 // PostV1CreditsPurchaseMultipartBody defines parameters for PostV1CreditsPurchase.
-type PostV1CreditsPurchaseMultipartBody = interface{}
+type PostV1CreditsPurchaseMultipartBody struct {
+	Amount int `json:"amount"`
+}
+
+// GetV1ScansParams defines parameters for GetV1Scans.
+type GetV1ScansParams struct {
+	BatchId *openapi_types.UUID `form:"batchId,omitempty" json:"batchId,omitempty"`
+}
 
 // PostV1ScansJSONBody defines parameters for PostV1Scans.
-type PostV1ScansJSONBody = interface{}
+type PostV1ScansJSONBody struct {
+	// Metadata Optional metadata to associate with the scan
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
+	Url      string                  `json:"url"`
+}
 
 // PostV1ScansFormdataBody defines parameters for PostV1Scans.
-type PostV1ScansFormdataBody = struct {
+type PostV1ScansFormdataBody struct {
+	// Metadata Optional metadata to associate with the scan
+	Metadata *map[string]interface{} `form:"metadata,omitempty" json:"metadata,omitempty"`
+	Url      string                  `form:"url" json:"url"`
 }
 
 // PostV1ScansMultipartBody defines parameters for PostV1Scans.
-type PostV1ScansMultipartBody = interface{}
+type PostV1ScansMultipartBody struct {
+	// Metadata Optional metadata to associate with the scan
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
+	Url      string                  `json:"url"`
+}
 
 // PostV1ScansBatchJSONBody defines parameters for PostV1ScansBatch.
-type PostV1ScansBatchJSONBody = interface{}
+type PostV1ScansBatchJSONBody struct {
+	Urls []string `json:"urls"`
+}
 
 // PostV1ScansBatchFormdataBody defines parameters for PostV1ScansBatch.
-type PostV1ScansBatchFormdataBody = struct {
+type PostV1ScansBatchFormdataBody struct {
+	Urls []string `form:"urls" json:"urls"`
 }
 
 // PostV1ScansBatchMultipartBody defines parameters for PostV1ScansBatch.
-type PostV1ScansBatchMultipartBody = interface{}
+type PostV1ScansBatchMultipartBody struct {
+	Urls []string `json:"urls"`
+}
 
 // PutV1SettingsJSONBody defines parameters for PutV1Settings.
-type PutV1SettingsJSONBody = interface{}
+type PutV1SettingsJSONBody struct {
+	SafeDomainPatterns   *[]string `json:"safeDomainPatterns,omitempty"`
+	UnsafeDomainPatterns *[]string `json:"unsafeDomainPatterns,omitempty"`
+}
 
 // PutV1SettingsFormdataBody defines parameters for PutV1Settings.
-type PutV1SettingsFormdataBody = struct {
+type PutV1SettingsFormdataBody struct {
+	SafeDomainPatterns   *[]string `form:"safeDomainPatterns,omitempty" json:"safeDomainPatterns,omitempty"`
+	UnsafeDomainPatterns *[]string `form:"unsafeDomainPatterns,omitempty" json:"unsafeDomainPatterns,omitempty"`
 }
 
 // PutV1SettingsMultipartBody defines parameters for PutV1Settings.
-type PutV1SettingsMultipartBody = interface{}
+type PutV1SettingsMultipartBody struct {
+	SafeDomainPatterns   *[]string `json:"safeDomainPatterns,omitempty"`
+	UnsafeDomainPatterns *[]string `json:"unsafeDomainPatterns,omitempty"`
+}
 
 // PostV1ApiKeysJSONRequestBody defines body for PostV1ApiKeys for application/json ContentType.
-type PostV1ApiKeysJSONRequestBody = PostV1ApiKeysJSONBody
+type PostV1ApiKeysJSONRequestBody PostV1ApiKeysJSONBody
 
 // PostV1ApiKeysFormdataRequestBody defines body for PostV1ApiKeys for application/x-www-form-urlencoded ContentType.
-type PostV1ApiKeysFormdataRequestBody = PostV1ApiKeysFormdataBody
+type PostV1ApiKeysFormdataRequestBody PostV1ApiKeysFormdataBody
 
 // PostV1ApiKeysMultipartRequestBody defines body for PostV1ApiKeys for multipart/form-data ContentType.
-type PostV1ApiKeysMultipartRequestBody = PostV1ApiKeysMultipartBody
+type PostV1ApiKeysMultipartRequestBody PostV1ApiKeysMultipartBody
 
 // PostV1CreditsPurchaseJSONRequestBody defines body for PostV1CreditsPurchase for application/json ContentType.
-type PostV1CreditsPurchaseJSONRequestBody = PostV1CreditsPurchaseJSONBody
+type PostV1CreditsPurchaseJSONRequestBody PostV1CreditsPurchaseJSONBody
 
 // PostV1CreditsPurchaseFormdataRequestBody defines body for PostV1CreditsPurchase for application/x-www-form-urlencoded ContentType.
-type PostV1CreditsPurchaseFormdataRequestBody = PostV1CreditsPurchaseFormdataBody
+type PostV1CreditsPurchaseFormdataRequestBody PostV1CreditsPurchaseFormdataBody
 
 // PostV1CreditsPurchaseMultipartRequestBody defines body for PostV1CreditsPurchase for multipart/form-data ContentType.
-type PostV1CreditsPurchaseMultipartRequestBody = PostV1CreditsPurchaseMultipartBody
+type PostV1CreditsPurchaseMultipartRequestBody PostV1CreditsPurchaseMultipartBody
 
 // PostV1ScansJSONRequestBody defines body for PostV1Scans for application/json ContentType.
-type PostV1ScansJSONRequestBody = PostV1ScansJSONBody
+type PostV1ScansJSONRequestBody PostV1ScansJSONBody
 
 // PostV1ScansFormdataRequestBody defines body for PostV1Scans for application/x-www-form-urlencoded ContentType.
-type PostV1ScansFormdataRequestBody = PostV1ScansFormdataBody
+type PostV1ScansFormdataRequestBody PostV1ScansFormdataBody
 
 // PostV1ScansMultipartRequestBody defines body for PostV1Scans for multipart/form-data ContentType.
-type PostV1ScansMultipartRequestBody = PostV1ScansMultipartBody
+type PostV1ScansMultipartRequestBody PostV1ScansMultipartBody
 
 // PostV1ScansBatchJSONRequestBody defines body for PostV1ScansBatch for application/json ContentType.
-type PostV1ScansBatchJSONRequestBody = PostV1ScansBatchJSONBody
+type PostV1ScansBatchJSONRequestBody PostV1ScansBatchJSONBody
 
 // PostV1ScansBatchFormdataRequestBody defines body for PostV1ScansBatch for application/x-www-form-urlencoded ContentType.
-type PostV1ScansBatchFormdataRequestBody = PostV1ScansBatchFormdataBody
+type PostV1ScansBatchFormdataRequestBody PostV1ScansBatchFormdataBody
 
 // PostV1ScansBatchMultipartRequestBody defines body for PostV1ScansBatch for multipart/form-data ContentType.
-type PostV1ScansBatchMultipartRequestBody = PostV1ScansBatchMultipartBody
+type PostV1ScansBatchMultipartRequestBody PostV1ScansBatchMultipartBody
 
 // PutV1SettingsJSONRequestBody defines body for PutV1Settings for application/json ContentType.
-type PutV1SettingsJSONRequestBody = PutV1SettingsJSONBody
+type PutV1SettingsJSONRequestBody PutV1SettingsJSONBody
 
 // PutV1SettingsFormdataRequestBody defines body for PutV1Settings for application/x-www-form-urlencoded ContentType.
-type PutV1SettingsFormdataRequestBody = PutV1SettingsFormdataBody
+type PutV1SettingsFormdataRequestBody PutV1SettingsFormdataBody
 
 // PutV1SettingsMultipartRequestBody defines body for PutV1Settings for multipart/form-data ContentType.
-type PutV1SettingsMultipartRequestBody = PutV1SettingsMultipartBody
+type PutV1SettingsMultipartRequestBody PutV1SettingsMultipartBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -212,7 +354,7 @@ type ClientInterface interface {
 	PostV1CreditsPurchaseWithFormdataBody(ctx context.Context, body PostV1CreditsPurchaseFormdataRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetV1Scans request
-	GetV1Scans(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetV1Scans(ctx context.Context, params *GetV1ScansParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PostV1ScansWithBody request with any body
 	PostV1ScansWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -368,8 +510,8 @@ func (c *Client) PostV1CreditsPurchaseWithFormdataBody(ctx context.Context, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetV1Scans(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetV1ScansRequest(c.Server)
+func (c *Client) GetV1Scans(ctx context.Context, params *GetV1ScansParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetV1ScansRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -647,7 +789,7 @@ func NewDeleteV1ApiKeysByIdRequest(server string, id openapi_types.UUID) (*http.
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
 	if err != nil {
 		return nil, err
 	}
@@ -754,7 +896,7 @@ func NewPostV1CreditsPurchaseRequestWithBody(server string, contentType string, 
 }
 
 // NewGetV1ScansRequest generates requests for GetV1Scans
-func NewGetV1ScansRequest(server string) (*http.Request, error) {
+func NewGetV1ScansRequest(server string, params *GetV1ScansParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -770,6 +912,28 @@ func NewGetV1ScansRequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.BatchId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "batchId", *params.BatchId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "uuid"}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -888,7 +1052,7 @@ func NewGetV1ScansByIdRequest(server string, id openapi_types.UUID) (*http.Reque
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
 	if err != nil {
 		return nil, err
 	}
@@ -922,7 +1086,7 @@ func NewGetV1ScansByIdAnalyticsRequest(server string, id openapi_types.UUID) (*h
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
 	if err != nil {
 		return nil, err
 	}
@@ -956,7 +1120,7 @@ func NewGetV1ScansByIdEventsRequest(server string, id openapi_types.UUID) (*http
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParam("simple", false, "id", id)
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
 	if err != nil {
 		return nil, err
 	}
@@ -1132,7 +1296,7 @@ type ClientWithResponsesInterface interface {
 	PostV1CreditsPurchaseWithFormdataBodyWithResponse(ctx context.Context, body PostV1CreditsPurchaseFormdataRequestBody, reqEditors ...RequestEditorFn) (*PostV1CreditsPurchaseResp, error)
 
 	// GetV1ScansWithResponse request
-	GetV1ScansWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetV1ScansResp, error)
+	GetV1ScansWithResponse(ctx context.Context, params *GetV1ScansParams, reqEditors ...RequestEditorFn) (*GetV1ScansResp, error)
 
 	// PostV1ScansWithBodyWithResponse request with any body
 	PostV1ScansWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostV1ScansResp, error)
@@ -1192,8 +1356,29 @@ func (r GetHealthResp) StatusCode() int {
 type GetV1ApiKeysResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON500      *interface{}
+	JSON200      *[]struct {
+		CreatedAt  time.Time          `json:"createdAt"`
+		ExpiresAt  *time.Time         `json:"expiresAt"`
+		Id         openapi_types.UUID `json:"id"`
+		LastUsedAt *time.Time         `json:"lastUsedAt"`
+		Name       string             `json:"name"`
+		RevokedAt  *time.Time         `json:"revokedAt"`
+		Scopes     []string           `json:"scopes"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1215,8 +1400,28 @@ func (r GetV1ApiKeysResp) StatusCode() int {
 type PostV1ApiKeysResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *interface{}
-	JSON500      *interface{}
+	JSON201      *struct {
+		CreatedAt time.Time          `json:"createdAt"`
+		Id        openapi_types.UUID `json:"id"`
+
+		// Key Plaintext API key (only shown once)
+		Key  string `json:"key"`
+		Name string `json:"name"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1238,10 +1443,52 @@ func (r PostV1ApiKeysResp) StatusCode() int {
 type DeleteV1ApiKeysByIdResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON400      *interface{}
-	JSON404      *interface{}
-	JSON500      *interface{}
+	JSON200      *struct {
+		// Id ID of the revoked API key
+		Id openapi_types.UUID `json:"id"`
+	}
+	JSON400 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON404 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1263,8 +1510,28 @@ func (r DeleteV1ApiKeysByIdResp) StatusCode() int {
 type GetV1CreditsResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON500      *interface{}
+	JSON200      *struct {
+		// Balance Current credit balance
+		Balance   int       `json:"balance"`
+		UpdatedAt time.Time `json:"updatedAt"`
+
+		// UserId User ID
+		UserId string `json:"userId"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1286,10 +1553,57 @@ func (r GetV1CreditsResp) StatusCode() int {
 type PostV1CreditsPurchaseResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *interface{}
-	JSON400      *interface{}
-	JSON402      *interface{}
-	JSON500      *interface{}
+	JSON201      *struct {
+		Amount      int                `json:"amount"`
+		CompletedAt time.Time          `json:"completedAt"`
+		CreatedAt   time.Time          `json:"createdAt"`
+		Id          openapi_types.UUID `json:"id"`
+		NewBalance  int                `json:"newBalance"`
+		Status      string             `json:"status"`
+		UserId      string             `json:"userId"`
+	}
+	JSON400 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON402 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1332,8 +1646,18 @@ func (r GetV1ScansResp) StatusCode() int {
 type PostV1ScansResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *interface{}
+	JSON201      *struct {
+		// Deduplicated True if this request returned an existing scan (in-flight or cached completed) instead of creating a new one
+		Deduplicated *bool `json:"deduplicated,omitempty"`
+
+		// Id Scan job ID
+		Id openapi_types.UUID `json:"id"`
+
+		// State Current state of the scan job. COMPLETED when returned from cache (deduplicated); in-progress states when a new or in-flight job is returned.
+		State PostV1Scans201State `json:"state"`
+	}
 }
+type PostV1Scans201State string
 
 // Status returns HTTPResponse.Status
 func (r PostV1ScansResp) Status() string {
@@ -1354,8 +1678,25 @@ func (r PostV1ScansResp) StatusCode() int {
 type PostV1ScansBatchResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *interface{}
+	JSON201      *struct {
+		// BatchId Batch ID for listing jobs by batch
+		BatchId openapi_types.UUID `json:"batchId"`
+		Jobs    []struct {
+			// Deduplicated True if this URL returned an existing in-flight scan instead of creating a new one
+			Deduplicated *bool `json:"deduplicated,omitempty"`
+
+			// Id Scan job ID
+			Id openapi_types.UUID `json:"id"`
+
+			// State Current state (may be in-progress if deduplicated)
+			State PostV1ScansBatch201JobsState `json:"state"`
+
+			// Url Scanned URL
+			Url string `json:"url"`
+		} `json:"jobs"`
+	}
 }
+type PostV1ScansBatch201JobsState string
 
 // Status returns HTTPResponse.Status
 func (r PostV1ScansBatchResp) Status() string {
@@ -1376,10 +1717,62 @@ func (r PostV1ScansBatchResp) StatusCode() int {
 type GetV1ScansByIdResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON404      *interface{}
-	JSON500      *interface{}
+	JSON200      *struct {
+		CompletedAt  *time.Time         `json:"completedAt,omitempty"`
+		CreatedAt    time.Time          `json:"createdAt"`
+		DurationMs   *int               `json:"durationMs,omitempty"`
+		ErrorMessage *string            `json:"errorMessage,omitempty"`
+		Id           openapi_types.UUID `json:"id"`
+		Result       *struct {
+			AnalysisMetadata *map[string]interface{} `json:"analysisMetadata,omitempty"`
+			Categories       []string                `json:"categories"`
+			ConfidenceScore  float32                 `json:"confidenceScore"`
+			ContentHash      string                  `json:"contentHash"`
+			ContentType      *string                 `json:"contentType"`
+			HttpHeaders      map[string]string       `json:"httpHeaders"`
+			HttpStatus       *int                    `json:"httpStatus"`
+			Indicators       []string                `json:"indicators"`
+			ModelUsed        string                  `json:"modelUsed"`
+			Reasoning        string                  `json:"reasoning"`
+			RiskScore        int                     `json:"riskScore"`
+		} `json:"result"`
+		StartedAt *time.Time             `json:"startedAt,omitempty"`
+		State     GetV1ScansById200State `json:"state"`
+		TimeoutAt *time.Time             `json:"timeoutAt,omitempty"`
+		UpdatedAt time.Time              `json:"updatedAt"`
+		Url       string                 `json:"url"`
+		WorkerId  *string                `json:"workerId,omitempty"`
+	}
+	JSON404 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
+type GetV1ScansById200State string
 
 // Status returns HTTPResponse.Status
 func (r GetV1ScansByIdResp) Status() string {
@@ -1442,9 +1835,43 @@ func (r GetV1ScansByIdEventsResp) StatusCode() int {
 type GetV1SettingsResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON404      *interface{}
-	JSON500      *interface{}
+	JSON200      *struct {
+		// ClerkUserId Clerk user ID (format: user_xxxxx)
+		ClerkUserId          string                  `json:"clerkUserId"`
+		CreatedAt            time.Time               `json:"createdAt"`
+		Metadata             *map[string]interface{} `json:"metadata,omitempty"`
+		SafeDomainPatterns   []string                `json:"safeDomainPatterns"`
+		UnsafeDomainPatterns []string                `json:"unsafeDomainPatterns"`
+		UpdatedAt            time.Time               `json:"updatedAt"`
+	}
+	JSON404 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1466,9 +1893,43 @@ func (r GetV1SettingsResp) StatusCode() int {
 type PutV1SettingsResp struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *interface{}
-	JSON404      *interface{}
-	JSON500      *interface{}
+	JSON200      *struct {
+		// ClerkUserId Clerk user ID (format: user_xxxxx)
+		ClerkUserId          string                  `json:"clerkUserId"`
+		CreatedAt            time.Time               `json:"createdAt"`
+		Metadata             *map[string]interface{} `json:"metadata,omitempty"`
+		SafeDomainPatterns   []string                `json:"safeDomainPatterns"`
+		UnsafeDomainPatterns []string                `json:"unsafeDomainPatterns"`
+		UpdatedAt            time.Time               `json:"updatedAt"`
+	}
+	JSON404 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
+	JSON500 *struct {
+		Error struct {
+			// Code Machine-readable error code
+			Code string `json:"code"`
+
+			// Details Additional error details
+			Details *map[string]interface{} `json:"details,omitempty"`
+
+			// Message Human-readable error message
+			Message string `json:"message"`
+		} `json:"error"`
+		RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+		Timestamp time.Time           `json:"timestamp"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1574,8 +2035,8 @@ func (c *ClientWithResponses) PostV1CreditsPurchaseWithFormdataBodyWithResponse(
 }
 
 // GetV1ScansWithResponse request returning *GetV1ScansResp
-func (c *ClientWithResponses) GetV1ScansWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetV1ScansResp, error) {
-	rsp, err := c.GetV1Scans(ctx, reqEditors...)
+func (c *ClientWithResponses) GetV1ScansWithResponse(ctx context.Context, params *GetV1ScansParams, reqEditors ...RequestEditorFn) (*GetV1ScansResp, error) {
+	rsp, err := c.GetV1Scans(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1724,14 +2185,35 @@ func ParseGetV1ApiKeysResp(rsp *http.Response) (*GetV1ApiKeysResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest []struct {
+			CreatedAt  time.Time          `json:"createdAt"`
+			ExpiresAt  *time.Time         `json:"expiresAt"`
+			Id         openapi_types.UUID `json:"id"`
+			LastUsedAt *time.Time         `json:"lastUsedAt"`
+			Name       string             `json:"name"`
+			RevokedAt  *time.Time         `json:"revokedAt"`
+			Scopes     []string           `json:"scopes"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1757,14 +2239,34 @@ func ParsePostV1ApiKeysResp(rsp *http.Response) (*PostV1ApiKeysResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest interface{}
+		var dest struct {
+			CreatedAt time.Time          `json:"createdAt"`
+			Id        openapi_types.UUID `json:"id"`
+
+			// Key Plaintext API key (only shown once)
+			Key  string `json:"key"`
+			Name string `json:"name"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON201 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1790,28 +2292,70 @@ func ParseDeleteV1ApiKeysByIdResp(rsp *http.Response) (*DeleteV1ApiKeysByIdResp,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest struct {
+			// Id ID of the revoked API key
+			Id openapi_types.UUID `json:"id"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1837,14 +2381,34 @@ func ParseGetV1CreditsResp(rsp *http.Response) (*GetV1CreditsResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest struct {
+			// Balance Current credit balance
+			Balance   int       `json:"balance"`
+			UpdatedAt time.Time `json:"updatedAt"`
+
+			// UserId User ID
+			UserId string `json:"userId"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1870,28 +2434,75 @@ func ParsePostV1CreditsPurchaseResp(rsp *http.Response) (*PostV1CreditsPurchaseR
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest interface{}
+		var dest struct {
+			Amount      int                `json:"amount"`
+			CompletedAt time.Time          `json:"completedAt"`
+			CreatedAt   time.Time          `json:"createdAt"`
+			Id          openapi_types.UUID `json:"id"`
+			NewBalance  int                `json:"newBalance"`
+			Status      string             `json:"status"`
+			UserId      string             `json:"userId"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON201 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON402 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1933,7 +2544,16 @@ func ParsePostV1ScansResp(rsp *http.Response) (*PostV1ScansResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest interface{}
+		var dest struct {
+			// Deduplicated True if this request returned an existing scan (in-flight or cached completed) instead of creating a new one
+			Deduplicated *bool `json:"deduplicated,omitempty"`
+
+			// Id Scan job ID
+			Id openapi_types.UUID `json:"id"`
+
+			// State Current state of the scan job. COMPLETED when returned from cache (deduplicated); in-progress states when a new or in-flight job is returned.
+			State PostV1Scans201State `json:"state"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1959,7 +2579,23 @@ func ParsePostV1ScansBatchResp(rsp *http.Response) (*PostV1ScansBatchResp, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest interface{}
+		var dest struct {
+			// BatchId Batch ID for listing jobs by batch
+			BatchId openapi_types.UUID `json:"batchId"`
+			Jobs    []struct {
+				// Deduplicated True if this URL returned an existing in-flight scan instead of creating a new one
+				Deduplicated *bool `json:"deduplicated,omitempty"`
+
+				// Id Scan job ID
+				Id openapi_types.UUID `json:"id"`
+
+				// State Current state (may be in-progress if deduplicated)
+				State PostV1ScansBatch201JobsState `json:"state"`
+
+				// Url Scanned URL
+				Url string `json:"url"`
+			} `json:"jobs"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1985,21 +2621,72 @@ func ParseGetV1ScansByIdResp(rsp *http.Response) (*GetV1ScansByIdResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest struct {
+			CompletedAt  *time.Time         `json:"completedAt,omitempty"`
+			CreatedAt    time.Time          `json:"createdAt"`
+			DurationMs   *int               `json:"durationMs,omitempty"`
+			ErrorMessage *string            `json:"errorMessage,omitempty"`
+			Id           openapi_types.UUID `json:"id"`
+			Result       *struct {
+				AnalysisMetadata *map[string]interface{} `json:"analysisMetadata,omitempty"`
+				Categories       []string                `json:"categories"`
+				ConfidenceScore  float32                 `json:"confidenceScore"`
+				ContentHash      string                  `json:"contentHash"`
+				ContentType      *string                 `json:"contentType"`
+				HttpHeaders      map[string]string       `json:"httpHeaders"`
+				HttpStatus       *int                    `json:"httpStatus"`
+				Indicators       []string                `json:"indicators"`
+				ModelUsed        string                  `json:"modelUsed"`
+				Reasoning        string                  `json:"reasoning"`
+				RiskScore        int                     `json:"riskScore"`
+			} `json:"result"`
+			StartedAt *time.Time             `json:"startedAt,omitempty"`
+			State     GetV1ScansById200State `json:"state"`
+			TimeoutAt *time.Time             `json:"timeoutAt,omitempty"`
+			UpdatedAt time.Time              `json:"updatedAt"`
+			Url       string                 `json:"url"`
+			WorkerId  *string                `json:"workerId,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2057,21 +2744,55 @@ func ParseGetV1SettingsResp(rsp *http.Response) (*GetV1SettingsResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest struct {
+			// ClerkUserId Clerk user ID (format: user_xxxxx)
+			ClerkUserId          string                  `json:"clerkUserId"`
+			CreatedAt            time.Time               `json:"createdAt"`
+			Metadata             *map[string]interface{} `json:"metadata,omitempty"`
+			SafeDomainPatterns   []string                `json:"safeDomainPatterns"`
+			UnsafeDomainPatterns []string                `json:"unsafeDomainPatterns"`
+			UpdatedAt            time.Time               `json:"updatedAt"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2097,21 +2818,55 @@ func ParsePutV1SettingsResp(rsp *http.Response) (*PutV1SettingsResp, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest interface{}
+		var dest struct {
+			// ClerkUserId Clerk user ID (format: user_xxxxx)
+			ClerkUserId          string                  `json:"clerkUserId"`
+			CreatedAt            time.Time               `json:"createdAt"`
+			Metadata             *map[string]interface{} `json:"metadata,omitempty"`
+			SafeDomainPatterns   []string                `json:"safeDomainPatterns"`
+			UnsafeDomainPatterns []string                `json:"unsafeDomainPatterns"`
+			UpdatedAt            time.Time               `json:"updatedAt"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest interface{}
+		var dest struct {
+			Error struct {
+				// Code Machine-readable error code
+				Code string `json:"code"`
+
+				// Details Additional error details
+				Details *map[string]interface{} `json:"details,omitempty"`
+
+				// Message Human-readable error message
+				Message string `json:"message"`
+			} `json:"error"`
+			RequestId *openapi_types.UUID `json:"requestId,omitempty"`
+			Timestamp time.Time           `json:"timestamp"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

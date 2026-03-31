@@ -63,7 +63,7 @@ export const getV1Scans = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * Create a new URL scan job
  *
- * Creates a new URL scan job and deducts credits from the user's wallet
+ * Creates a new URL scan job and deducts credits from the user's wallet. If an in-flight or recently completed scan for the same URL exists, returns the existing scan without charging credits (deduplicated: true).
  */
 export const postV1Scans = <ThrowOnError extends boolean = false>(options: Options<PostV1ScansData, ThrowOnError>) => (options.client ?? client).post<PostV1ScansResponses, unknown, ThrowOnError>({
     url: '/v1/scans/',
@@ -77,7 +77,7 @@ export const postV1Scans = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Create a batch of URL scan jobs
  *
- * Creates multiple scan jobs in one request. Deducts credits for each URL. Max 50 URLs per batch. Returns batchId for listing via GET /v1/scans?batchId=.
+ * Creates multiple scan jobs in one request. Deducts credits only for URLs that need new scans. If an in-flight or recently completed scan exists for a URL, returns the existing scan (deduplicated: true). Max 50 URLs per batch. Returns batchId for listing via GET /v1/scans?batchId=.
  */
 export const postV1ScansBatch = <ThrowOnError extends boolean = false>(options: Options<PostV1ScansBatchData, ThrowOnError>) => (options.client ?? client).post<PostV1ScansBatchResponses, unknown, ThrowOnError>({
     url: '/v1/scans/batch',
