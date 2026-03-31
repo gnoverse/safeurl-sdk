@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/gnoverse/safeurl-sdk/compare/v1.3.1...v1.3.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* **go:** go scanner types to match api ([2aa3f08](https://github.com/gnoverse/safeurl-sdk/commit/2aa3f08178ba9cb38f409ee40a74cb01a6128f4d))
+
 ## [1.3.1](https://github.com/gnoverse/safeurl-sdk/compare/v1.3.0...v1.3.1) (2026-03-31)
 
 
