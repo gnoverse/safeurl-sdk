@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gnoverse/safeurl-sdk/compare/sdk-v1.0.0...sdk-v1.0.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* **sdk:** regenerate clients from latest OpenAPI spec ([f69f839](https://github.com/gnoverse/safeurl-sdk/commit/f69f839f4d156912e21094dcd189c0d440bb3d1c))
+
 ## 1.0.0 (2026-03-27)
 
 
