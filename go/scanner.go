@@ -191,8 +191,8 @@ func (s *Scanner) ScanBatch(ctx context.Context, urls []string) (map[string]*Sca
 	results := make(map[string]*ScanResponse)
 	pending := make(map[string]string) // scanID -> url
 
-	for i := range batchResp.Scans {
-		scan := &batchResp.Scans[i]
+	for i := range batchResp.Jobs {
+		scan := &batchResp.Jobs[i]
 		if scan.IsComplete() {
 			results[scan.URL] = scan
 		} else {

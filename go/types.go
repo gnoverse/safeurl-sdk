@@ -70,7 +70,7 @@ func (s *ScanResponse) IsComplete() bool {
 // BatchScanResponse represents the response from a batch scan request.
 type BatchScanResponse struct {
 	BatchID string         `json:"batchId"`
-	Scans   []ScanResponse `json:"scans"`
+	Jobs    []ScanResponse `json:"jobs"`
 }
 
 // GetScanResponse represents the response when fetching a scan by ID.
