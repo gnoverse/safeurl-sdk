@@ -4,6 +4,199 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type ApiKeyCreation = {
+    /**
+     * Human-readable name for the API key
+     */
+    name: string;
+    /**
+     * Optional expiration date (ISO 8601)
+     */
+    expiresAt?: string;
+    /**
+     * API key scopes/permissions
+     */
+    scopes: Array<'scan:read' | 'scan:write' | 'credits:read' | 'credits:write'>;
+};
+
+export type CreateApiKeyResponse = {
+    id: string;
+    /**
+     * Plaintext API key (only shown once)
+     */
+    key: string;
+    name: string;
+    createdAt: string;
+};
+
+export type ApiKeyListResponse = Array<{
+    id: string;
+    name: string;
+    scopes: Array<string>;
+    expiresAt: string | null;
+    lastUsedAt: string | null;
+    createdAt: string;
+    revokedAt: string | null;
+}>;
+
+export type RevokeApiKeyResponse = {
+    /**
+     * ID of the revoked API key
+     */
+    id: string;
+};
+
+export type ErrorResponse = {
+    error: {
+        /**
+         * Machine-readable error code
+         */
+        code: string;
+        /**
+         * Human-readable error message
+         */
+        message: string;
+        /**
+         * Additional error details
+         */
+        details?: {
+            [key: string]: unknown;
+        };
+    };
+    timestamp: string;
+    requestId?: string;
+};
+
+export type CreateScanRequest = {
+    url: string;
+    /**
+     * Optional metadata to associate with the scan
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+};
+
+export type CreateScanResponse = {
+    /**
+     * Scan job ID
+     */
+    id: string;
+    /**
+     * Current state of the scan job. COMPLETED when returned from cache (deduplicated); in-progress states when a new or in-flight job is returned.
+     */
+    state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED';
+    /**
+     * True if this request returned an existing scan (in-flight or cached completed) instead of creating a new one
+     */
+    deduplicated?: boolean;
+};
+
+export type CreateBatchScanRequest = {
+    urls: Array<string>;
+};
+
+export type CreateBatchScanResponse = {
+    /**
+     * Batch ID for listing jobs by batch
+     */
+    batchId: string;
+    jobs: Array<{
+        /**
+         * Scan job ID
+         */
+        id: string;
+        /**
+         * Current state (may be in-progress if deduplicated)
+         */
+        state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED' | 'FAILED' | 'TIMED_OUT';
+        /**
+         * Scanned URL
+         */
+        url: string;
+        /**
+         * True if this URL returned an existing in-flight scan instead of creating a new one
+         */
+        deduplicated?: boolean;
+    }>;
+};
+
+export type ScanResponse = {
+    id: string;
+    url: string;
+    state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED' | 'FAILED' | 'TIMED_OUT';
+    createdAt: string;
+    updatedAt: string;
+    errorMessage?: string | null;
+    startedAt?: string | null;
+    completedAt?: string | null;
+    timeoutAt?: string | null;
+    durationMs?: number | null;
+    workerId?: string | null;
+    result: {
+        riskScore: number;
+        categories: Array<string>;
+        confidenceScore: number;
+        reasoning: string;
+        indicators: Array<string>;
+        contentHash: string;
+        httpStatus: number | null;
+        httpHeaders: {
+            [key: string]: string;
+        };
+        contentType: string | null;
+        modelUsed: string;
+        analysisMetadata?: {
+            [key: string]: unknown;
+        };
+    } | null;
+};
+
+export type PurchaseCreditsRequest = {
+    amount: number;
+};
+
+export type PurchaseCreditsResponse = {
+    id: string;
+    userId: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+    completedAt: string;
+    newBalance: number;
+};
+
+export type CreditBalanceResponse = {
+    /**
+     * Current credit balance
+     */
+    balance: number;
+    /**
+     * User ID
+     */
+    userId: string;
+    updatedAt: string;
+};
+
+export type UserSettings = {
+    /**
+     * Clerk user ID (format: user_xxxxx)
+     */
+    clerkUserId: string;
+    createdAt: string;
+    updatedAt: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    safeDomainPatterns: Array<string>;
+    unsafeDomainPatterns: Array<string>;
+};
+
+export type UpdateUserSettings = {
+    safeDomainPatterns?: Array<string>;
+    unsafeDomainPatterns?: Array<string>;
+};
+
 export type GetHealthData = {
     body?: never;
     path?: never;
@@ -22,18 +215,62 @@ export type GetV1ApiKeysErrors = {
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type GetV1ApiKeysError = GetV1ApiKeysErrors[keyof GetV1ApiKeysErrors];
 
 export type GetV1ApiKeysResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: Array<{
+        id: string;
+        name: string;
+        scopes: Array<string>;
+        expiresAt: string | null;
+        lastUsedAt: string | null;
+        createdAt: string;
+        revokedAt: string | null;
+    }>;
 };
 
+export type GetV1ApiKeysResponse = GetV1ApiKeysResponses[keyof GetV1ApiKeysResponses];
+
 export type PostV1ApiKeysData = {
-    body: unknown;
+    body: {
+        /**
+         * Human-readable name for the API key
+         */
+        name: string;
+        /**
+         * Optional expiration date (ISO 8601)
+         */
+        expiresAt?: string;
+        /**
+         * API key scopes/permissions
+         */
+        scopes: Array<'scan:read' | 'scan:write' | 'credits:read' | 'credits:write'>;
+    };
     path?: never;
     query?: never;
     url: '/v1/api-keys/';
@@ -43,15 +280,46 @@ export type PostV1ApiKeysErrors = {
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type PostV1ApiKeysError = PostV1ApiKeysErrors[keyof PostV1ApiKeysErrors];
 
 export type PostV1ApiKeysResponses = {
     /**
      * Response for status 201
      */
-    201: unknown;
+    201: {
+        id: string;
+        /**
+         * Plaintext API key (only shown once)
+         */
+        key: string;
+        name: string;
+        createdAt: string;
+    };
 };
+
+export type PostV1ApiKeysResponse = PostV1ApiKeysResponses[keyof PostV1ApiKeysResponses];
 
 export type DeleteV1ApiKeysByIdData = {
     body?: never;
@@ -66,28 +334,96 @@ export type DeleteV1ApiKeysByIdErrors = {
     /**
      * Response for status 400
      */
-    400: unknown;
+    400: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 404
      */
-    404: unknown;
+    404: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type DeleteV1ApiKeysByIdError = DeleteV1ApiKeysByIdErrors[keyof DeleteV1ApiKeysByIdErrors];
 
 export type DeleteV1ApiKeysByIdResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: {
+        /**
+         * ID of the revoked API key
+         */
+        id: string;
+    };
 };
+
+export type DeleteV1ApiKeysByIdResponse = DeleteV1ApiKeysByIdResponses[keyof DeleteV1ApiKeysByIdResponses];
 
 export type GetV1ScansData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        batchId?: string;
+    };
     url: '/v1/scans/';
 };
 
@@ -110,7 +446,15 @@ export type GetV1ScansResponses = {
 };
 
 export type PostV1ScansData = {
-    body: unknown;
+    body: {
+        url: string;
+        /**
+         * Optional metadata to associate with the scan
+         */
+        metadata?: {
+            [key: string]: unknown;
+        };
+    };
     path?: never;
     query?: never;
     url: '/v1/scans/';
@@ -120,11 +464,28 @@ export type PostV1ScansResponses = {
     /**
      * Response for status 201
      */
-    201: unknown;
+    201: {
+        /**
+         * Scan job ID
+         */
+        id: string;
+        /**
+         * Current state of the scan job. COMPLETED when returned from cache (deduplicated); in-progress states when a new or in-flight job is returned.
+         */
+        state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED';
+        /**
+         * True if this request returned an existing scan (in-flight or cached completed) instead of creating a new one
+         */
+        deduplicated?: boolean;
+    };
 };
 
+export type PostV1ScansResponse = PostV1ScansResponses[keyof PostV1ScansResponses];
+
 export type PostV1ScansBatchData = {
-    body: unknown;
+    body: {
+        urls: Array<string>;
+    };
     path?: never;
     query?: never;
     url: '/v1/scans/batch';
@@ -134,8 +495,33 @@ export type PostV1ScansBatchResponses = {
     /**
      * Response for status 201
      */
-    201: unknown;
+    201: {
+        /**
+         * Batch ID for listing jobs by batch
+         */
+        batchId: string;
+        jobs: Array<{
+            /**
+             * Scan job ID
+             */
+            id: string;
+            /**
+             * Current state (may be in-progress if deduplicated)
+             */
+            state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED' | 'FAILED' | 'TIMED_OUT';
+            /**
+             * Scanned URL
+             */
+            url: string;
+            /**
+             * True if this URL returned an existing in-flight scan instead of creating a new one
+             */
+            deduplicated?: boolean;
+        }>;
+    };
 };
+
+export type PostV1ScansBatchResponse = PostV1ScansBatchResponses[keyof PostV1ScansBatchResponses];
 
 export type GetV1ScansByIdAnalyticsData = {
     body?: never;
@@ -208,19 +594,90 @@ export type GetV1ScansByIdErrors = {
     /**
      * Response for status 404
      */
-    404: unknown;
+    404: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type GetV1ScansByIdError = GetV1ScansByIdErrors[keyof GetV1ScansByIdErrors];
 
 export type GetV1ScansByIdResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: {
+        id: string;
+        url: string;
+        state: 'QUEUED' | 'FETCHING' | 'ANALYZING' | 'COMPLETED' | 'FAILED' | 'TIMED_OUT';
+        createdAt: string;
+        updatedAt: string;
+        errorMessage?: string | null;
+        startedAt?: string | null;
+        completedAt?: string | null;
+        timeoutAt?: string | null;
+        durationMs?: number | null;
+        workerId?: string | null;
+        result: {
+            riskScore: number;
+            categories: Array<string>;
+            confidenceScore: number;
+            reasoning: string;
+            indicators: Array<string>;
+            contentHash: string;
+            httpStatus: number | null;
+            httpHeaders: {
+                [key: string]: string;
+            };
+            contentType: string | null;
+            modelUsed: string;
+            analysisMetadata?: {
+                [key: string]: unknown;
+            };
+        } | null;
+    };
 };
+
+export type GetV1ScansByIdResponse = GetV1ScansByIdResponses[keyof GetV1ScansByIdResponses];
 
 export type GetV1CreditsData = {
     body?: never;
@@ -233,18 +690,53 @@ export type GetV1CreditsErrors = {
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type GetV1CreditsError = GetV1CreditsErrors[keyof GetV1CreditsErrors];
 
 export type GetV1CreditsResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: {
+        /**
+         * Current credit balance
+         */
+        balance: number;
+        /**
+         * User ID
+         */
+        userId: string;
+        updatedAt: string;
+    };
 };
 
+export type GetV1CreditsResponse = GetV1CreditsResponses[keyof GetV1CreditsResponses];
+
 export type PostV1CreditsPurchaseData = {
-    body: unknown;
+    body: {
+        amount: number;
+    };
     path?: never;
     query?: never;
     url: '/v1/credits/purchase';
@@ -254,23 +746,92 @@ export type PostV1CreditsPurchaseErrors = {
     /**
      * Response for status 400
      */
-    400: unknown;
+    400: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 402
      */
-    402: unknown;
+    402: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type PostV1CreditsPurchaseError = PostV1CreditsPurchaseErrors[keyof PostV1CreditsPurchaseErrors];
 
 export type PostV1CreditsPurchaseResponses = {
     /**
      * Response for status 201
      */
-    201: unknown;
+    201: {
+        id: string;
+        userId: string;
+        amount: number;
+        status: string;
+        createdAt: string;
+        completedAt: string;
+        newBalance: number;
+    };
 };
+
+export type PostV1CreditsPurchaseResponse = PostV1CreditsPurchaseResponses[keyof PostV1CreditsPurchaseResponses];
 
 export type GetV1SettingsData = {
     body?: never;
@@ -283,22 +844,79 @@ export type GetV1SettingsErrors = {
     /**
      * Response for status 404
      */
-    404: unknown;
+    404: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type GetV1SettingsError = GetV1SettingsErrors[keyof GetV1SettingsErrors];
 
 export type GetV1SettingsResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: {
+        /**
+         * Clerk user ID (format: user_xxxxx)
+         */
+        clerkUserId: string;
+        createdAt: string;
+        updatedAt: string;
+        metadata?: {
+            [key: string]: unknown;
+        };
+        safeDomainPatterns: Array<string>;
+        unsafeDomainPatterns: Array<string>;
+    };
 };
 
+export type GetV1SettingsResponse = GetV1SettingsResponses[keyof GetV1SettingsResponses];
+
 export type PutV1SettingsData = {
-    body: unknown;
+    body: {
+        safeDomainPatterns?: Array<string>;
+        unsafeDomainPatterns?: Array<string>;
+    };
     path?: never;
     query?: never;
     url: '/v1/settings/';
@@ -308,16 +926,70 @@ export type PutV1SettingsErrors = {
     /**
      * Response for status 404
      */
-    404: unknown;
+    404: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
     /**
      * Response for status 500
      */
-    500: unknown;
+    500: {
+        error: {
+            /**
+             * Machine-readable error code
+             */
+            code: string;
+            /**
+             * Human-readable error message
+             */
+            message: string;
+            /**
+             * Additional error details
+             */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        timestamp: string;
+        requestId?: string;
+    };
 };
+
+export type PutV1SettingsError = PutV1SettingsErrors[keyof PutV1SettingsErrors];
 
 export type PutV1SettingsResponses = {
     /**
      * Response for status 200
      */
-    200: unknown;
+    200: {
+        /**
+         * Clerk user ID (format: user_xxxxx)
+         */
+        clerkUserId: string;
+        createdAt: string;
+        updatedAt: string;
+        metadata?: {
+            [key: string]: unknown;
+        };
+        safeDomainPatterns: Array<string>;
+        unsafeDomainPatterns: Array<string>;
+    };
 };
+
+export type PutV1SettingsResponse = PutV1SettingsResponses[keyof PutV1SettingsResponses];
