@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/gnoverse/safeurl-sdk/compare/v1.1.1...v1.2.0) (2026-03-31)
+
+
+### Features
+
+* **go:** deduplicate URLs in batch scanning ([72852c3](https://github.com/gnoverse/safeurl-sdk/commit/72852c344081d45ff38583cce0e5df7f9cea2274))
+
 ## [1.1.1](https://github.com/gnoverse/safeurl-sdk/compare/v1.1.0...v1.1.1) (2026-03-31)
 
 
