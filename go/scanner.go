@@ -131,6 +131,7 @@ func (s *Scanner) ScanURL(ctx context.Context, rawURL string) (*ScanResponse, er
 }
 
 // ScanURLs scans multiple URLs and waits for all results.
+// Duplicate URLs are automatically deduplicated before scanning.
 // URLs are automatically chunked if they exceed the batch limit (50).
 // Returns a map of URL to scan result.
 func (s *Scanner) ScanURLs(ctx context.Context, urls []string) (map[string]*ScanResponse, error) {
@@ -138,15 +139,25 @@ func (s *Scanner) ScanURLs(ctx context.Context, urls []string) (map[string]*Scan
 		return make(map[string]*ScanResponse), nil
 	}
 
+	// Deduplicate URLs upfront to avoid splitting duplicates across chunks
+	seen := make(map[string]bool)
+	uniqueURLs := make([]string, 0, len(urls))
+	for _, u := range urls {
+		if !seen[u] {
+			seen[u] = true
+			uniqueURLs = append(uniqueURLs, u)
+		}
+	}
+
 	results := make(map[string]*ScanResponse)
 
 	// Process in chunks
-	for i := 0; i < len(urls); i += BatchScanMaxURLs {
+	for i := 0; i < len(uniqueURLs); i += BatchScanMaxURLs {
 		end := i + BatchScanMaxURLs
-		if end > len(urls) {
-			end = len(urls)
+		if end > len(uniqueURLs) {
+			end = len(uniqueURLs)
 		}
-		chunk := urls[i:end]
+		chunk := uniqueURLs[i:end]
 
 		chunkResults, err := s.ScanBatch(ctx, chunk)
 		if err != nil {
@@ -162,13 +173,28 @@ func (s *Scanner) ScanURLs(ctx context.Context, urls []string) (map[string]*Scan
 }
 
 // ScanBatch scans a single batch of URLs (max 50) and waits for completion.
-// Returns ErrBatchTooLarge if the number of URLs exceeds BatchScanMaxURLs.
+// Duplicate URLs are automatically deduplicated before sending to the API.
+// Returns ErrBatchTooLarge if the number of unique URLs exceeds BatchScanMaxURLs.
 func (s *Scanner) ScanBatch(ctx context.Context, urls []string) (map[string]*ScanResponse, error) {
-	if len(urls) > BatchScanMaxURLs {
+	// Deduplicate URLs
+	seen := make(map[string]bool)
+	uniqueURLs := make([]string, 0, len(urls))
+	for _, u := range urls {
+		if !seen[u] {
+			seen[u] = true
+			uniqueURLs = append(uniqueURLs, u)
+		}
+	}
+
+	if len(uniqueURLs) == 0 {
+		return make(map[string]*ScanResponse), nil
+	}
+
+	if len(uniqueURLs) > BatchScanMaxURLs {
 		return nil, ErrBatchTooLarge
 	}
 
-	req := BatchScanRequest{URLs: urls}
+	req := BatchScanRequest{URLs: uniqueURLs}
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("safeurl: failed to marshal request: %w", err)

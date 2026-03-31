@@ -3,6 +3,7 @@ package safeurl
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -58,9 +59,10 @@ func TestScanURL_InvalidURL(t *testing.T) {
 
 func TestScanBatch_TooLarge(t *testing.T) {
 	scanner, _ := NewScanner("test-api-key")
+	// Create unique URLs to exceed batch limit after deduplication
 	urls := make([]string, BatchScanMaxURLs+1)
 	for i := range urls {
-		urls[i] = "https://example.com"
+		urls[i] = fmt.Sprintf("https://example.com/%d", i)
 	}
 
 	_, err := scanner.ScanBatch(context.Background(), urls)
@@ -179,6 +181,73 @@ func TestScanURLs_Empty(t *testing.T) {
 	}
 	if len(results) != 0 {
 		t.Errorf("ScanURLs([]) returned %d results, want 0", len(results))
+	}
+}
+
+func TestScanBatch_Deduplication(t *testing.T) {
+	var receivedURLs []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.URL.Path == "/v1/scans/batch" && r.Method == "POST" {
+			var req BatchScanRequest
+			json.NewDecoder(r.Body).Decode(&req)
+			receivedURLs = req.URLs
+
+			// Return completed scans for all URLs
+			resp := BatchScanResponse{
+				BatchID: "test-batch-id",
+				Jobs:    make([]ScanResponse, len(req.URLs)),
+			}
+			for i, u := range req.URLs {
+				resp.Jobs[i] = ScanResponse{
+					ID:      fmt.Sprintf("scan-%d", i),
+					URL:     u,
+					State:   ScanStateCompleted,
+					Verdict: VerdictSafe,
+				}
+			}
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	scanner, _ := NewScannerWithBaseURL(server.URL, "test-api-key")
+
+	// Submit duplicate URLs
+	urls := []string{
+		"https://example.com/a",
+		"https://example.com/b",
+		"https://example.com/a", // duplicate
+		"https://example.com/c",
+		"https://example.com/b", // duplicate
+		"https://example.com/a", // duplicate
+	}
+
+	results, err := scanner.ScanBatch(context.Background(), urls)
+	if err != nil {
+		t.Fatalf("ScanBatch() error = %v", err)
+	}
+
+	// Should only send 3 unique URLs to the API
+	if len(receivedURLs) != 3 {
+		t.Errorf("expected 3 unique URLs sent to API, got %d: %v", len(receivedURLs), receivedURLs)
+	}
+
+	// Results should contain all 3 unique URLs
+	if len(results) != 3 {
+		t.Errorf("expected 3 results, got %d", len(results))
+	}
+
+	// Verify all unique URLs have results
+	for _, u := range []string{"https://example.com/a", "https://example.com/b", "https://example.com/c"} {
+		if _, ok := results[u]; !ok {
+			t.Errorf("missing result for URL: %s", u)
+		}
 	}
 }
 
